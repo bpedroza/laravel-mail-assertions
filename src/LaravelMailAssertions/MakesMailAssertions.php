@@ -126,15 +126,13 @@ trait MakesMailAssertions
      */
     public function fakeMail()
     {
-        Mail::shouldReceive('send')->andReturnUsing(function (...$args) {
-            $this->getEmailSender()->send(...$args);
-        });
-
-        Mail::shouldReceive('raw')->andReturnUsing(function (...$args) {
-            $this->getEmailSender()->sendRaw(...$args);
-        });
-
-        Mail::shouldReceive('failures');
+        if (method_exists($this, 'afterApplicationCreated')) {
+            $this->afterApplicationCreated(function () {
+                $this->mockMailFacade();
+            });
+        } else {
+            $this->mockMailFacade();
+        }
     }
 
     /**
@@ -182,5 +180,22 @@ trait MakesMailAssertions
     private function getEmailSender()
     {
         return Mailer::instance();
+    }
+
+    /**
+     * Mock the mail facade
+     * @return void
+     */
+    private function mockMailFacade()
+    {
+        Mail::shouldReceive('send')->andReturnUsing(function (...$args) {
+            $this->getEmailSender()->send(...$args);
+        });
+
+        Mail::shouldReceive('raw')->andReturnUsing(function (...$args) {
+            $this->getEmailSender()->sendRaw(...$args);
+        });
+
+        Mail::shouldReceive('failures');
     }
 }
