@@ -16,7 +16,12 @@ class MailUtilitiesTest extends TestCase
 
     public function test_get_emails()
     {
+        Mail::raw('', function($mail) {
+            $mail->to('test@example.org');
+        });
+
         $this->assertInstanceOf(Collection::class, $this->getEmails());
+        $this->assertEquals(1, $this->getEmails()->count());
     }
 
     public function test_get_emails_for_address()

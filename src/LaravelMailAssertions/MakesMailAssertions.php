@@ -16,7 +16,7 @@ trait MakesMailAssertions
     /**
      * @var Mailer
      */
-    private static $emailSender;
+    private $emailSender;
 
     /**
      * See that there is no email sent
@@ -26,7 +26,7 @@ trait MakesMailAssertions
     public function assertEmailNotSent($message = 'An unexpected email was sent.')
     {
         $this->assertNull(
-            $this->lastEmail(),
+            $this->getLastEmail(),
             $message
         );
 
@@ -41,7 +41,7 @@ trait MakesMailAssertions
     public function assertEmailSent($message = 'Unable to find a generated email.')
     {
         $this->assertNotNull(
-            $this->lastEmail(),
+            $this->getlastEmail(),
             $message
         );
 
@@ -107,9 +107,18 @@ trait MakesMailAssertions
     {
         $this->assertEmailSent();
         $this->assertTrue(
-            $this->lastEmail()->contains($string),
-            sprintf("%s \n Could not find [%s] in the above message.", $this->lastEmail()->getBody(), $string)
+            $this->getLastEmail()->contains($string),
+            sprintf("%s \n Could not find [%s] in the above message.", $this->getLastEmail()->getBody(), $string)
         );
+    }
+
+    /**
+     * @after
+     */
+    public function emptyMail()
+    {
+        $this->getEmailSender()->empty();
+        \Mockery::close();
     }
 
     /**
@@ -117,13 +126,15 @@ trait MakesMailAssertions
      */
     public function fakeMail()
     {
-        if(method_exists($this, 'afterApplicationCreated')) {
-            $this->afterApplicationCreated(function () {
-                $this->mockMailFacade();
-            });
-        } else {
-            $this->mockMailFacade();
-        }
+        Mail::shouldReceive('send')->andReturnUsing(function (...$args) {
+            $this->getEmailSender()->send(...$args);
+        });
+
+        Mail::shouldReceive('raw')->andReturnUsing(function (...$args) {
+            $this->getEmailSender()->sendRaw(...$args);
+        });
+
+        Mail::shouldReceive('failures');
     }
 
     /**
@@ -132,7 +143,7 @@ trait MakesMailAssertions
      */
     public function getEmails(): Collection
     {
-        return $this->getEmailSender()->getEmails();
+        return $this->getEmailSender()->all();
     }
 
     /**
@@ -161,9 +172,8 @@ trait MakesMailAssertions
      */
     public function getLastEmail()
     {
-        return $this->getEmailSender()->lastEmail();
+        return $this->getEmailSender()->last();
     }
-
 
     /**
      * Gets the sender class
@@ -171,28 +181,6 @@ trait MakesMailAssertions
      */
     private function getEmailSender()
     {
-        if(static::$emailSender === null) {
-            static::$emailSender = new Mailer;
-        }
-
-        return static::$emailSender;
-    }
-
-    /**
-     * Mock the mail facade
-     * @return void
-     */
-    private function mockMailFacade()
-    {
-        $this->getEmailSender()->empty();
-        Mail::shouldReceive('send')->andReturnUsing(function (...$args) {
-            $this->getEmailSender()->send(...$args);
-        });
-
-        Mail::shouldReceive('raw')->andReturnUsing(function (...$args) {
-            $this->getEmailSender()->sendRaw(...$args);
-        });
-
-        Mail::shouldReceive('failures');
+        return Mailer::instance();
     }
 }

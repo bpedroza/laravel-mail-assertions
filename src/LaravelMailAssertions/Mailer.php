@@ -15,11 +15,25 @@ class Mailer
     private $emails;
 
     /**
+     * @var Mailer
+     */
+    private static $instance;
+
+    /**
      * Initialize the messages collection
      */
     public function __construct()
     {
         $this->empty();
+    }
+
+    /**
+     * Get the emails collection
+     * @return Collection
+     */
+    public function all(): Collection
+    {
+        return $this->emails;
     }
 
     /**
@@ -29,15 +43,6 @@ class Mailer
     public function empty()
     {
         $this->emails = new Collection();
-    }
-
-    /**
-     * Get the emails collection
-     * @return Collection
-     */
-    public function getEmails(): Collection
-    {
-        return $this->emails;
     }
 
     /**
@@ -77,11 +82,24 @@ class Mailer
     }
 
     /**
+     * Get the current instance of the mailer
+     * @return Mailer
+     */
+    public static function instance(): Mailer
+    {
+        if(static::$instance === null) {
+            static::$instance = new static();
+        }
+
+        return static::$instance;
+    }
+
+    /**
      * Get the last email sent
      *
      * @return Email|null
      */
-    public function lastEmail()
+    public function last()
     {
         return $this->emails->last();
     }
