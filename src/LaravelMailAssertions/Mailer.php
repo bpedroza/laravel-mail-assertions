@@ -32,13 +32,22 @@ class Mailer
     }
 
     /**
+     * Get the emails collection
+     * @return Collection
+     */
+    public function getEmails(): Collection
+    {
+        return $this->emails;
+    }
+
+    /**
      * Check if there is an email sent for a given address
      * @param  string  $address
      * @return bool
      */
     public function hasEmailFor($address): bool
     {
-        return $this->emails->filter(function ($email) use ($address) {
+        return $this->emails->filter(function (Email $email) use ($address) {
             return $email->hasRecipient($address);
         })->count() > 0;
     }

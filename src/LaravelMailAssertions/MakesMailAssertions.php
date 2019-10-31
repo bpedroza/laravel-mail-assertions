@@ -132,21 +132,17 @@ trait MakesMailAssertions
      */
     public function getEmails(): Collection
     {
-        return $this->getEmailSender()->emails;
+        return $this->getEmailSender()->getEmails();
     }
 
     /**
-     * @param array|string $address
+     * @param string $address
      * @return \Illuminate\Support\Collection
      */
-    public function getEmailsFor($address): Collection
+    public function getEmailsFor(string $address): Collection
     {
-        $addresses = collect((array) $address);
-
-        return $this->getEmails()->filter(function (Email $email) use ($addresses) {
-            return $addresses->contains(function ($address) use ($email) {
-                return $email->hasRecipient($address);
-            });
+        return $this->getEmails()->filter(function (Email $email) use ($address) {
+            return $email->hasRecipient($address);
         });
     }
 
@@ -163,7 +159,7 @@ trait MakesMailAssertions
      * Get the last email sent
      * @return \Tests\MailTheif\Email|null
      */
-    public function lastEmail()
+    public function getLastEmail()
     {
         return $this->getEmailSender()->lastEmail();
     }
