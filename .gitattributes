@@ -2,4 +2,6 @@
 .gitignore export-ignore
 phpunit.xml export-ignore
 CONTRIBUTING.md export-ignore
+LICENSE.md export-ignore
+composer.lock export-ignore
 /tests export-ignore
