@@ -1,4 +1,4 @@
-# laravel-mail-assertions
+# Laravel Mail Assertions
 Make assertions on emails in Laravel 6
 
 This is a simple package to allow you to make assertions on emails sent with laravel.
