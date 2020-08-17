@@ -197,5 +197,6 @@ trait MakesMailAssertions
         });
 
         Mail::shouldReceive('failures');
+        Mail::shouldReceive('mailer')->andReturn($this->getEmailSender());
     }
 }
