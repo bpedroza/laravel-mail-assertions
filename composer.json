@@ -31,5 +31,8 @@
     },
     "config": {
         "preferred-install": "dist"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
