@@ -1,5 +1,5 @@
 # Laravel Mail Assertions
-Make assertions on emails in Laravel 6, 7, and 8
+Make assertions on emails in Laravel 6 - 10
 
 This is a simple package to allow you to make assertions on emails sent with laravel.
 
