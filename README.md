@@ -1,3 +1,5 @@
+![Build Status](https://github.com/bpedroza/laravel-mail-assertions/actions/workflows/run-tests.yml/badge.svg)
+
 # Laravel Mail Assertions
 Make assertions on emails in Laravel 6 - 11
 
